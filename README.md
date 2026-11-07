@@ -26,7 +26,7 @@ as an MCP server inside **Claude Desktop** on Kali Linux (and other Debian/Ubunt
 
 ## Usage
 
-Clone the repo, then run the scripts **in order**:
+Clone the repo and run the first two scripts:
 
 ```bash
 git clone https://github.com/AjpSh00t3r/Claude_Kali_HexStrike.git
@@ -34,11 +34,22 @@ cd Claude_Kali_HexStrike
 chmod +x *.sh
 ./01-install-claude-desktop.sh     # Claude Desktop via official apt repo
 ./02-install-hexstrike.sh          # HexStrike + Python 3.13 venv
+```
+
+**Now launch Claude Desktop once, sign in, then fully quit it** (tray icon → Quit).
+Claude writes its own config on first run and on exit, so signing in *before* the next
+step lets it establish its baseline config — otherwise that first sign-in can overwrite
+the MCP settings. (Script 3 also force-quits a running Claude Desktop as a safeguard,
+but it can't do the sign-in for you.)
+
+Then configure the MCP server and relaunch:
+
+```bash
 ./03-configure-mcp.sh              # MCP config + control script + autostart service
 ```
 
-Then launch **Claude Desktop** and confirm **hexstrike-ai** appears as a connected
-MCP server with its tools.
+Finally, launch **Claude Desktop** again and confirm **hexstrike-ai** appears as a
+connected MCP server with its tools.
 
 To skip the autostart service and start the server manually instead:
 
