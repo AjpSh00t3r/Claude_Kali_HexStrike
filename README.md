@@ -65,6 +65,28 @@ Or with the control script (also good for logs):
 ~/hexstrike-ai/hexstrike.sh restart
 ```
 
+## How it starts (server vs. MCP bridge)
+
+There are two separate pieces, and it's worth knowing which starts what:
+
+- **HexStrike server** (`hexstrike_server.py`, listens on `:8888`) — the actual
+  engine. It is started by the **systemd `--user` service** that script 3 enabled,
+  which runs automatically when you **log in** to the desktop (and restarts it on
+  crash). You do **not** start it by hand in normal use.
+- **MCP bridge** (`hexstrike_mcp.py`) — a thin client that **Claude Desktop launches
+  automatically** on startup (via the `command` in `claude_desktop_config.json`).
+  The bridge **connects** to the server on `:8888`; it does **not** start the server.
+
+In other words: **launching Claude Desktop does not start the HexStrike server** — it
+only starts the bridge, which expects the server to already be running. The systemd
+service is what guarantees that. If you skipped the service (`NO_SERVICE=1`), start
+the server yourself first with `~/hexstrike-ai/hexstrike.sh start`.
+
+> **First login is slow:** on a cold start the server probes 150+ tools, so it can
+> take ~30–60s before it answers. If you open Claude Desktop immediately after login,
+> `hexstrike-ai` may show as failed on the first try — wait until
+> `~/hexstrike-ai/hexstrike.sh status` says `RUNNING`, then (re)launch Claude Desktop.
+
 ## Why Python 3.13?
 
 Kali rolling currently ships **Python 3.14**. HexStrike's dependency set (notably
